@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Neuro Hafidz Protocol</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --deep:#1B4D3E;
+    --bright:#2F6B57;
+    --gold:#B8862E;
+    --gold-bright:#D8A64B;
+    --cream:#FBF7EE;
+    --cream-alt:#F1ECDF;
+    --fear-bg:#EDEAE2;
+    --ink:#241F1A;
+    --ink-soft:#5B554C;
+    --line:#DED3BC;
+    --white:#ffffff;
+  }
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  html{ scroll-behavior:smooth; }
+  body{
+    font-family:'Inter', sans-serif;
+    color:var(--ink);
+    background:var(--cream);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  img{ max-width:100%; display:block; }
+  h1,h2,h3{ font-family:'Playfair Display', serif; font-weight:700; line-height:1.15; }
+  .container{ max-width:1180px; margin:0 auto; padding:0 24px; }
+  section{ position:relative; width:100%; }
+
+  /* ===== Utility: fade in on scroll =====
+     Default state is fully visible. JS adds .reveal-init (opacity 0) right
+     before observing, so if JS fails to load, content stays visible instead
+     of permanently hidden. */
+  .reveal{ opacity:1; transform:none; transition:opacity .7s ease, transform .7s ease; }
+  .reveal.reveal-init{ opacity:0; transform:translateY(24px); }
+  .reveal.reveal-init.show{ opacity:1; transform:translateY(0); }
+  @media (prefers-reduced-motion: reduce){
+    .reveal.reveal-init{ opacity:1; transform:none; transition:none; }
+    html{ scroll-behavior:auto; }
+  }
+
+  html, body{ overflow-x:hidden; width:100%; }
+
+  /* ===== Buttons ===== */
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:8px;
+    background:var(--gold); color:#fff; font-family:'Inter',sans-serif; font-weight:700;
+    font-size:15.5px; padding:15px 22px; border-radius:8px; text-decoration:none;
+    border:none; cursor:pointer; transition:transform .2s ease, background .2s ease, box-shadow .2s ease;
+    box-shadow:0 8px 24px rgba(184,134,46,0.28);
+    max-width:100%; width:100%; text-align:center; line-height:1.3;
+  }
+  .btn:hover{ background:var(--gold-bright); transform:scale(1.03); }
+  .btn-lg{ font-size:16.5px; padding:17px 26px; }
+  .btn-outline{
+    background:transparent; color:#fff; border:1.5px solid rgba(255,255,255,0.6);
+    box-shadow:none;
+  }
+  .btn-outline:hover{ background:rgba(255,255,255,0.12); }
+
+  .kicker{
+    font-family:'Inter',sans-serif; font-weight:700; font-size:12.5px; letter-spacing:2.5px;
+    text-transform:uppercase; color:var(--gold); display:block; margin-bottom:14px;
+  }
+  .kicker.on-dark{ color:var(--gold-bright); }
+
+  /* ===== HERO =====
+     Mobile: natural stacked flow — headline, then plain image, then subheadline/CTA.
+     Desktop: image becomes full-bleed absolute background with text overlaid on top. */
+  .hero{
+    display:flex; flex-direction:column;
+    background:#0d241d;
+    position:relative;
+    overflow:hidden;
+  }
+  .hero-headline-wrap{
+    position:relative; z-index:2; padding:36px 20px 6px 20px; min-width:0;
+  }
+  .hero-media{
+    position:relative; width:100%; min-width:0;
+    aspect-ratio:4 / 5; overflow:hidden; background:#0d241d;
+  }
+  .hero-bg{
+    position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center 20%;
+  }
+  .hero-overlay{ display:none; }
+  .hero-text-wrap{ position:relative; z-index:2; padding:22px 20px 44px 20px; min-width:0; }
+  .hero h1{
+    font-size:clamp(26px, 7.5vw, 54px); color:#fff; margin-bottom:0;
+  }
+  .hero p.sub{
+    font-size:16px; color:rgba(255,255,255,0.88); margin-bottom:22px;
+  }
+  .hero .trust{
+    margin-top:14px; font-size:13px; color:rgba(255,255,255,0.65);
+  }
+
+  /* ===== Generic split section ===== */
+  .split{
+    min-height:100svh; display:flex; align-items:center; padding:80px 0;
+  }
+  .split .container{
+    display:grid; grid-template-columns:1fr; gap:40px; align-items:center;
+  }
+  .split .media img{ border-radius:14px; box-shadow:0 24px 50px rgba(36,31,26,0.18); }
+  .split h2{ font-size:clamp(26px, 4.2vw, 40px); color:var(--deep); margin-bottom:18px; }
+  .split p{ font-size:clamp(16px, 2vw, 18px); color:var(--ink-soft); margin-bottom:14px; max-width:540px; }
+  .split p strong{ color:var(--ink); }
+
+  .sec-fear{ background:var(--fear-bg); }
+  .sec-reframe{ background:var(--deep); color:#fff; display:flex; align-items:center; min-height:70svh; }
+  .sec-reframe .container{ max-width:820px; text-align:center; }
+  .sec-reframe h2{ color:#fff; font-size:clamp(26px,4.5vw,42px); }
+  .sec-reframe p{ color:rgba(255,255,255,0.85); font-size:clamp(16px,2vw,19px); margin:0 auto; max-width:640px; }
+  .sec-dream{ background:var(--cream); }
+  .sec-product{ background:var(--cream-alt); }
+  .sec-how{ background:var(--cream); }
+  .sec-offer{ background:var(--deep); color:#fff; }
+  .sec-forwho{ background:var(--cream-alt); }
+
+  /* ===== Product cards ===== */
+  .stack-card{
+    background:#fff; border:1px solid var(--line); border-left:4px solid var(--gold);
+    border-radius:10px; padding:22px 24px; margin-bottom:16px;
+    box-shadow:0 6px 18px rgba(36,31,26,0.05);
+  }
+  .stack-card h3{ font-family:'Inter',sans-serif; font-weight:700; font-size:18px; color:var(--deep); margin-bottom:6px; }
+  .stack-card p{ font-size:15.5px; color:var(--ink-soft); margin-bottom:8px; }
+  .stack-card .price{ font-family:'Inter',sans-serif; font-weight:700; color:var(--gold); font-size:15px; }
+
+  /* ===== How it works ===== */
+  .how-grid{
+    display:grid; grid-template-columns:1fr; gap:28px; margin-top:44px;
+  }
+  .how-step{ text-align:left; }
+  .how-num{
+    width:48px; height:48px; border-radius:50%; background:var(--deep); color:#fff;
+    display:flex; align-items:center; justify-content:center; font-family:'Playfair Display',serif;
+    font-weight:700; font-size:20px; margin-bottom:16px;
+  }
+  .how-step h3{ font-family:'Inter',sans-serif; font-weight:700; font-size:19px; color:var(--deep); margin-bottom:8px; }
+  .how-step p{ font-size:15.5px; color:var(--ink-soft); }
+
+  /* ===== Offer ===== */
+  .offer-box{
+    background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.18);
+    border-radius:16px; padding:40px 32px; max-width:520px; margin:40px auto 0 auto;
+    text-align:center; backdrop-filter:blur(2px);
+  }
+  .offer-line{
+    display:flex; justify-content:space-between; font-size:15px; color:rgba(255,255,255,0.75);
+    padding:8px 0; border-bottom:1px dashed rgba(255,255,255,0.2);
+  }
+  .offer-total{
+    display:flex; justify-content:space-between; font-weight:700; font-size:16px; color:#fff; padding:12px 0 0 0;
+  }
+  .price-row{ margin:28px 0 8px 0; }
+  .price-old{ font-size:20px; color:rgba(255,255,255,0.55); text-decoration:line-through; margin-right:12px; font-family:'Inter',sans-serif; }
+  .price-new{ font-family:'Playfair Display',serif; font-weight:800; font-size:clamp(36px,6vw,52px); color:var(--gold-bright); }
+  .risk-list{ list-style:none; margin-top:26px; text-align:left; display:inline-block; }
+  .risk-list li{ font-size:14.5px; color:rgba(255,255,255,0.85); padding:5px 0; }
+  .risk-list li:before{ content:"✓ "; color:var(--gold-bright); font-weight:700; }
+
+  /* ===== For who ===== */
+  .forwho-grid{ display:grid; grid-template-columns:1fr; gap:24px; margin-top:36px; }
+  .forwho-card{ background:#fff; border-radius:12px; padding:26px; border:1px solid var(--line); }
+  .forwho-card h3{ font-family:'Inter',sans-serif; font-weight:700; font-size:17px; color:var(--deep); margin-bottom:8px; }
+  .forwho-card p{ font-size:15px; color:var(--ink-soft); }
+
+  /* ===== Closing ===== */
+  .closing{
+    min-height:100svh; display:flex; align-items:center; justify-content:flex-end;
+    background:#0d241d; overflow:hidden; position:relative;
+  }
+  .closing-bg{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center 25%; }
+  .closing-overlay{
+    position:absolute; inset:0;
+    background:linear-gradient(260deg, rgba(13,36,29,0.94) 0%, rgba(13,36,29,0.82) 30%, rgba(13,36,29,0.3) 62%, rgba(13,36,29,0.05) 100%);
+  }
+  .closing-content{
+    position:relative; z-index:2; color:#fff; max-width:560px; text-align:right;
+    padding:70px 20px 56px 20px; margin-left:auto; min-width:0; width:100%;
+  }
+  .closing h2{ color:#fff; font-size:clamp(24px,7vw,44px); margin-bottom:18px; }
+  .closing p{ color:rgba(255,255,255,0.85); font-size:clamp(15.5px,2vw,18px); margin-bottom:26px; }
+  .closing .btn-row{ display:flex; justify-content:flex-end; min-width:0; }
+
+  footer{ background:var(--deep); color:rgba(255,255,255,0.6); text-align:center; padding:28px 24px; font-size:13px; }
+
+  /* ===== Sticky CTA ===== */
+  .sticky-cta{
+    position:fixed; left:0; right:0; bottom:0; z-index:50;
+    background:#fff; border-top:1px solid var(--line);
+    box-shadow:0 -8px 30px rgba(36,31,26,0.12);
+    transform:translateY(110%); transition:transform .35s ease-out;
+    padding:12px 18px;
+  }
+  .sticky-cta.show{ transform:translateY(0); }
+  .sticky-cta .container{
+    display:flex; align-items:center; justify-content:space-between; gap:12px; padding:0;
+  }
+  .sticky-info{ display:flex; flex-direction:column; min-width:0; overflow:hidden; }
+  .sticky-info .name{ font-size:11.5px; color:var(--ink-soft); font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .sticky-info .price{ font-family:'Playfair Display',serif; font-weight:800; font-size:18px; color:var(--deep); white-space:nowrap; }
+  .sticky-info .price .old{ font-size:12px; color:var(--ink-soft); text-decoration:line-through; font-family:'Inter',sans-serif; font-weight:500; margin-right:5px; }
+  .sticky-cta .btn{ padding:11px 16px; font-size:13.5px; width:auto; flex-shrink:0; }
+
+  /* ===== Desktop rules ===== */
+  @media (min-width:1024px){
+    .split .container{ grid-template-columns:1fr 1fr; gap:64px; }
+    .split.img-right .media{ order:2; }
+    .split.img-right .text{ order:1; }
+    .how-grid{ grid-template-columns:repeat(3,1fr); gap:32px; }
+    .forwho-grid{ grid-template-columns:1fr 1fr; }
+    .closing-content{ padding:120px 64px 110px 64px; }
+
+    /* Hero switches to full bleed background image with overlaid text */
+    .hero{ min-height:100svh; justify-content:center; }
+    .hero-media{
+      position:absolute; inset:0; width:100%; height:100%; aspect-ratio:auto;
+    }
+    .hero-overlay{
+      display:block; position:absolute; inset:0;
+      background:linear-gradient(100deg, rgba(13,36,29,0.94) 0%, rgba(13,36,29,0.82) 30%, rgba(13,36,29,0.35) 62%, rgba(13,36,29,0.08) 100%);
+    }
+    .hero-headline-wrap{ max-width:620px; padding:0 24px 0 64px; }
+    .hero-text-wrap{ max-width:620px; padding:20px 24px 0 64px; }
+    .hero h1{ margin-bottom:20px; }
+    .hero p.sub{ font-size:clamp(17px, 1.6vw, 19px); max-width:520px; }
+  }
+  @media (max-width:1023px){
+    section:not(.hero):not(.closing):not(.sec-reframe){ min-height:auto; padding:64px 0; }
+    .split{ padding:56px 0; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <div class="hero-headline-wrap">
+    <h1>Hafal Al Quran dalam 90 Hari, Sambil Membangun Otak yang Tetap Tajam Sampai Tua</h1>
+  </div>
+  <div class="hero-media">
+    <img class="hero-bg" src="https://drive.google.com/thumbnail?id=1_Y546wc6tF2Z0rqa5W0_Hyeo6MlmIX8s&sz=w1600" alt="">
+    <div class="hero-overlay"></div>
+  </div>
+  <div class="hero-text-wrap">
+    <p class="sub">Bukan metode anak kecil yang dulu bikin kamu gagal. Cukup 20 sampai 30 menit sehari, di rumah, tanpa perlu ke pesantren atau les tahfidz lagi.</p>
+    <a href="#offer" class="btn btn-lg">Ya, Aku Mau Mulai Hafal Hari Ini</a>
+    <p class="trust">Langsung dapat aksesnya begitu pembayaran selesai. Bisa dibuka di HP atau laptop, kapan saja.</p>
+  </div>
+</section>
+
+<!-- ============ FEAR ============ -->
+<section class="split sec-fear" id="fear">
+  <div class="container">
+    <div class="media reveal">
+      <img src="https://drive.google.com/thumbnail?id=1K4Ykx3Pwvaa__-_cugLr2NSdehdqZEaH&sz=w1400" alt="Momen khawatir soal daya ingat">
+    </div>
+    <div class="text reveal">
+      <span class="kicker">Sebelum Lanjut</span>
+      <h2>Kamu Sudah Pernah Coba, dan Kamu Sudah Pernah Kecewa</h2>
+      <p>Kamu bukan orang yang malas. Kamu sudah coba menghafal sebelumnya, mungkin bertahun tahun lalu, mungkin baru beberapa bulan lalu. Ayat yang kemarin terasa sudah lengket, besok paginya hilang lagi seperti tidak pernah dihafal sama sekali.</p>
+      <p>Ada juga rasa takut yang selama ini kamu simpan sendirian. Mulai sering lupa nama orang yang baru dikenal. Berdiri di depan lemari lalu lupa sedang cari apa. Diam diam bertanya, apakah ini awal dari sesuatu yang lebih serius, seperti yang dulu terjadi pada orang tuamu.</p>
+      <p><strong>Kamu tidak butuh omongan "kamu pasti bisa" yang kosong. Kamu butuh tahu kenapa cara lama itu gagal, dan apa yang sebenarnya perlu diganti.</strong></p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ REFRAME ============ -->
+<section class="sec-reframe">
+  <div class="container reveal">
+    <span class="kicker on-dark">Titik Baliknya</span>
+    <h2>Bukan Otakmu yang Lemah, Cuma Caranya yang Salah</h2>
+    <p>Metode menghafal yang diajarkan sejak kecil itu dirancang untuk otak anak anak, bukan otak yang sudah matang seperti otakmu sekarang. Begitu caranya diganti sesuai kekuatan otak dewasa, ayat yang dulu selalu hilang keesokan harinya, sekarang bertahan.</p>
+  </div>
+</section>
+
+<!-- ============ DREAM ============ -->
+<section class="split sec-dream img-right" id="dream">
+  <div class="container">
+    <div class="media reveal">
+      <img src="https://drive.google.com/thumbnail?id=1WzHlcQJ4cI2mUgHYf2cZIP7ASCNmi0YK&sz=w1400" alt="Menjadi imam sholat keluarga">
+    </div>
+    <div class="text reveal">
+      <span class="kicker">Bayangkan Ini</span>
+      <h2>Bayangkan Hari ke 90 dari Sekarang</h2>
+      <p>Kamu berdiri jadi imam sholat di rumah, membaca ayat demi ayat tanpa ragu, tanpa gemetar takut lupa di tengah bacaan. Anak dan cucu melihatmu sebagai panutan, bukan cuma orang tua yang menyuruh mereka ngaji.</p>
+      <p>Pikiranmu terasa lebih tajam. Lebih jarang lupa taruh kunci di mana. Lebih mudah ikuti obrolan tanpa kehilangan alur. Bukan kebetulan, karena metode yang kamu jalani sekaligus melatih tiga sistem otak yang selama ini terbukti melindungi dari penurunan daya ingat di usia tua.</p>
+      <p><strong>Yang paling penting, kamu merasa tenang.</strong> Bukan lagi diam diam takut menghadapi usia tua, tapi merasa sedang benar benar melakukan sesuatu untuk melindungi dirimu sendiri, sambil semakin dekat dengan Al Quran.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ISI PRODUK ============ -->
+<section class="split sec-product" id="produk">
+  <div class="container">
+    <div class="media reveal">
+      <img src="https://drive.google.com/thumbnail?id=1UCkRm4uG_ne2FDQkPFCJSFWWhliRoS1L&sz=w1400" alt="Neuro Hafidz Protocol ebook dan bonus">
+    </div>
+    <div class="text reveal">
+      <span class="kicker">Yang Kamu Dapatkan</span>
+      <h2>Semua yang Kamu Butuhkan untuk Menjalani 90 Hari, Sudah Disiapkan</h2>
+      <div class="stack-card">
+        <h3>Neuro Hafidz Protocol (Ebook Utama)</h3>
+        <p>Pemahaman lengkap kenapa metode lama gagal, cara kerja otak dewasa saat menghafal, dan peta perjalanan 90 hari yang realistis.</p>
+        <div class="price">Nilai Rp197.000</div>
+      </div>
+      <div class="stack-card">
+        <h3>Protokol 90 Hari (Bonus 1)</h3>
+        <p>Jadwal harian siap pakai, template menghafal yang tinggal diisi, panduan tajwid dasar, dan checklist harian.</p>
+        <div class="price">Nilai Rp149.000</div>
+      </div>
+      <div class="stack-card">
+        <h3>Neuro Hafidz Audit dan Peta Kemajuan (Bonus 2)</h3>
+        <p>Audit di hari pertama untuk tahu titik berangkatmu, lembar pemeriksaan di hari 30, 60, 90, sampai panduan kalau progresmu macet.</p>
+        <div class="price">Nilai Rp97.000</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ HOW IT WORKS ============ -->
+<section class="sec-how">
+  <div class="container reveal">
+    <span class="kicker">Cara Mulainya</span>
+    <h2 style="max-width:640px; font-size:clamp(26px,4.2vw,40px); color:var(--deep);">Semudah 3 Langkah untuk Mulai Hari Ini</h2>
+    <div class="how-grid">
+      <div class="how-step">
+        <div class="how-num">1</div>
+        <h3>Download begitu pembayaran selesai</h3>
+        <p>Tiga PDF langsung ada di tanganmu, tidak perlu tunggu kiriman apapun.</p>
+      </div>
+      <div class="how-step">
+        <div class="how-num">2</div>
+        <h3>Isi audit singkat di hari pertama</h3>
+        <p>Lima belas menit saja, supaya kamu tahu titik mulaimu yang sebenarnya.</p>
+      </div>
+      <div class="how-step">
+        <div class="how-num">3</div>
+        <h3>Ikuti jadwal harian yang sudah disiapkan</h3>
+        <p>Buka mushaf, ikuti template, centang checklist. Tidak perlu susun sendiri dari nol.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ OFFER ============ -->
+<section class="sec-offer" id="offer">
+  <div class="container reveal" style="text-align:center;">
+    <span class="kicker on-dark">Penawaran Hari Ini</span>
+    <h2 style="color:#fff; max-width:720px; margin:0 auto; font-size:clamp(26px,4.2vw,40px);">Nilai Totalnya Rp443.000, Hari Ini Kamu Bisa Dapat Semuanya Jauh Lebih Murah</h2>
+
+    <div class="offer-box">
+      <div class="offer-line"><span>Neuro Hafidz Protocol (Ebook Utama)</span><span>Rp197.000</span></div>
+      <div class="offer-line"><span>Bonus 1: Protokol 90 Hari</span><span>Rp149.000</span></div>
+      <div class="offer-line"><span>Bonus 2: Audit dan Peta Kemajuan</span><span>Rp97.000</span></div>
+      <div class="offer-total"><span>Total Nilai</span><span>Rp443.000</span></div>
+
+      <div class="price-row">
+        <span class="price-old">Rp443.000</span>
+        <span class="price-new">Rp127.000</span>
+      </div>
+      <p style="color:rgba(255,255,255,0.7); font-size:14px; margin-bottom:6px;">Harga peluncuran, sekali bayar untuk selamanya.</p>
+
+      <a href="#" class="btn btn-lg" style="margin-top:18px; width:100%;">Ya, Aku Mau Mulai Hafal Hari Ini</a>
+
+      <ul class="risk-list">
+        <li>Akses selamanya, file jadi milikmu</li>
+        <li>Tanpa biaya bulanan apapun</li>
+        <li>Pembayaran aman lewat sistem terenkripsi</li>
+        <li>Langsung bisa dibuka di HP atau laptop</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOR WHO ============ -->
+<section class="sec-forwho">
+  <div class="container reveal">
+    <span class="kicker">Ini Cocok Buat Siapa</span>
+    <h2 style="font-size:clamp(26px,4.2vw,38px); color:var(--deep); max-width:680px;">Cocok untuk Kamu yang Merasa "Sudah Terlambat"</h2>
+    <div class="forwho-grid">
+      <div class="forwho-card">
+        <h3>Kamu usia 45 tahun ke atas</h3>
+        <p>Yang pernah gagal menghafal dan diam diam menyalahkan diri sendiri karenanya, padahal masalahnya cuma di metodenya.</p>
+      </div>
+      <div class="forwho-card">
+        <h3>Anak yang peduli orang tuanya</h3>
+        <p>Yang ingin membelikan sesuatu yang benar benar berarti untuk orang tua, bukan sekadar hadiah basa basi.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CLOSING ============ -->
+<section class="closing">
+  <img class="closing-bg" src="https://drive.google.com/thumbnail?id=1W7NrhGXBXyJ0q4enmKCh_GLSG8qypjd_&sz=w1600" alt="">
+  <div class="closing-overlay"></div>
+  <div class="closing-content">
+    <h2>Sembilan Puluh Hari akan Berlalu Juga, Terserah Kamu Mau Mulai Sekarang atau Tidak</h2>
+    <p>Waktu tetap jalan baik kamu mulai hari ini atau menunda lagi. Bedanya cuma satu, di hari ke 90 nanti kamu sudah lebih dekat dengan hafalan yang selama ini kamu impikan, atau masih di titik yang sama seperti sekarang.</p>
+    <div class="btn-row">
+      <a href="#offer" class="btn btn-lg">Ya, Aku Mau Mulai Hafal Hari Ini</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  Neuro Hafidz Protocol &middot; Produk digital, akses instan setelah pembayaran
+</footer>
+
+<!-- ============ STICKY CTA ============ -->
+<div class="sticky-cta" id="stickyCta">
+  <div class="container">
+    <div class="sticky-info">
+      <span class="name">Neuro Hafidz Protocol</span>
+      <span class="price"><span class="old">Rp443.000</span>Rp127.000</span>
+    </div>
+    <a href="#offer" class="btn">Mulai Sekarang</a>
+  </div>
+</div>
+
+<script>
+  // Reveal on scroll (progressive enhancement: only hide content once JS confirms it can reveal it again)
+  const revealEls = document.querySelectorAll('.reveal');
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting){
+        entry.target.classList.add('show');
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15 });
+  revealEls.forEach(el => {
+    el.classList.add('reveal-init');
+    revealObserver.observe(el);
+  });
+
+  // Sticky CTA appears after hero section
+  const hero = document.querySelector('.hero');
+  const stickyCta = document.getElementById('stickyCta');
+  const heroObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting){
+        stickyCta.classList.remove('show');
+      } else {
+        // only show when hero has been scrolled past (above viewport), not before it's seen
+        if(entry.boundingClientRect.top < 0){
+          stickyCta.classList.add('show');
+        }
+      }
+    });
+  }, { threshold: 0 });
+  heroObserver.observe(hero);
+</script>
+
+</body>
+</html>
